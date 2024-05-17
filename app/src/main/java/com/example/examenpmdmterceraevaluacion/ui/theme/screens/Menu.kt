@@ -18,7 +18,7 @@ fun Menu(navController: NavController){
         Button(onClick = {navController.navigate(route = Screens.Login.route)}) {
                 Text(text = "Login")
         }
-        Button(onClick = {navController.navigate(route = Screens.Login.route)}) {
+        Button(onClick = {navController.navigate(route = Screens.Ejercicio2.route)}) {
             Text(text = "Ejercicio2")
         }
     }
