@@ -1,11 +1,10 @@
-package com.example.examenpmdmterceraevaluacion.ui.theme.screens
+package com.example.examenpmdmterceraevaluacion.ui.theme.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,12 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.Ejercicio1ViewModel
+import com.example.examenpmdmterceraevaluacion.ui.theme.screens.Screens
+import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.LoginViewModel
 
 @Composable
-fun AppLogin(navController: NavController,viewModel: Ejercicio1ViewModel){
+fun AppLogin(navController: NavController,viewModel: LoginViewModel){
     val context = LocalContext.current
 
     Column(
@@ -36,7 +35,7 @@ fun AppLogin(navController: NavController,viewModel: Ejercicio1ViewModel){
         TextField(
             value = viewModel.username,
             onValueChange ={viewModel.username = it},
-            label = { Text("Username") },
+            label = { Text("Usuario") },
             modifier = Modifier.width(200.dp)
         )
 
@@ -45,7 +44,7 @@ fun AppLogin(navController: NavController,viewModel: Ejercicio1ViewModel){
         TextField(
             value = viewModel.password,
             onValueChange = {viewModel.password = it},
-            label = {Text("Password")},
+            label = {Text("Contraseña")},
             modifier = Modifier.width(200.dp),
             visualTransformation = PasswordVisualTransformation()
         )
@@ -73,7 +72,13 @@ fun AppLogin(navController: NavController,viewModel: Ejercicio1ViewModel){
             Text("Log in")
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
 
+        Button(onClick = {
+            navController.navigate(Screens.Registrar.route)
+        }) {
+            Text("Registrarse")
+        }
     }
 
 }

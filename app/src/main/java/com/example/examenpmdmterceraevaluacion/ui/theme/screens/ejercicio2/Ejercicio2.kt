@@ -1,4 +1,4 @@
-package com.example.examenpmdmterceraevaluacion.ui.theme.screens
+package com.example.examenpmdmterceraevaluacion.ui.theme.screens.ejercicio2
 
 import android.annotation.SuppressLint
 import androidx.compose.material.BottomAppBar
@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.Ejercicio1ViewModel
 import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.Ejercicio2ViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
