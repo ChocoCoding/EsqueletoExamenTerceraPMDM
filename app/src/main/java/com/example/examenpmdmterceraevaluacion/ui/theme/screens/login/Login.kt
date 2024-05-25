@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -19,11 +20,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.examenpmdmterceraevaluacion.ui.theme.screens.Screens
+import com.example.examenpmdmterceraevaluacion.ui.theme.screens.ejercicio1.MostrarProductosSeleccionados
 import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.LoginViewModel
 
 @Composable
 fun AppLogin(navController: NavController,viewModel: LoginViewModel){
     val context = LocalContext.current
+
+    if(viewModel.showDialogIntentos.value){
+        NoHayMasIntentosDialog(
+            viewModel = viewModel,
+            onDismiss = {viewModel.showDialogIntentos.value = false}
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -59,9 +68,13 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
                 }else{
                     viewModel.intentos--
                     if(viewModel.intentos <= 0){
-                        Toast.makeText(context, "Te has quedado sin intentos", Toast.LENGTH_SHORT).show()
-                        navController.navigate(route = Screens.Menu.route)
-                        viewModel.intentos = 3;
+                        //Toast.makeText(context, "Te has quedado sin intentos", Toast.LENGTH_SHORT).show()
+                        viewModel.showDialogIntentos.value = true
+                        if(!viewModel.showDialogIntentos.value){
+                            navController.navigate(route = Screens.Menu.route)
+                            viewModel.intentos = 3;
+                        }
+
                     }else{
                         Toast.makeText(context, "Intentos restantes: ${viewModel.intentos}", Toast.LENGTH_SHORT).show()
                         viewModel.username = ""
@@ -80,5 +93,24 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
             Text("Registrarse")
         }
     }
+
+}
+
+@Composable
+fun NoHayMasIntentosDialog(
+    viewModel: LoginViewModel,
+    onDismiss: () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Te has quedado sin intentos") },
+        text = {},
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Cerrar")
+            }
+        }
+    )
+
 
 }

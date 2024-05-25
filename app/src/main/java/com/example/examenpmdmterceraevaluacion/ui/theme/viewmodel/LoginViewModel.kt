@@ -15,6 +15,8 @@ class LoginViewModel : ViewModel(){
 
     var isValidCredential by mutableStateOf(false)
 
+    var showDialogIntentos = mutableStateOf(false)
+
     var users = getListaUsuarios().toMutableList()
 
     /*

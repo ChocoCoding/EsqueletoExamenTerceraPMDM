@@ -2,17 +2,14 @@ package com.example.examenpmdmterceraevaluacion.ui.theme.screens.ejercicio1
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,6 +29,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,13 +37,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.examenpmdmterceraevaluacion.R
 import com.example.examenpmdmterceraevaluacion.ui.theme.entities.Producto
-import com.example.examenpmdmterceraevaluacion.ui.theme.screens.Screens
 import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.Ejercicio1ViewModel
 import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.LoginViewModel
 
@@ -68,7 +63,10 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                         onClick = {viewModelEjercicio1.showAddDialog.value = true}) {
                         Icon(Icons.Default.Add, contentDescription = "Añadir")
                     }
-                }
+                    IconButton(onClick = {viewModelEjercicio1.showSeleccionadosDialog.value = true}) {
+                        Icon(Icons.Default.ShoppingCart,contentDescription = "Productos Seleccionados")
+                    }
+                },
             )
         },
         bottomBar = {
@@ -113,10 +111,40 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                 )
             }
 
+            if(viewModelEjercicio1.showSeleccionadosDialog.value){
+                MostrarProductosSeleccionados(
+                    viewModel = viewModelEjercicio1,
+                    onDismiss = {viewModelEjercicio1.showSeleccionadosDialog.value = false}
+                )
+            }
+
         }
 
     }
 
+}
+
+@Composable
+fun MostrarProductosSeleccionados(
+    viewModel: Ejercicio1ViewModel,
+    onDismiss: () -> Unit,
+){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Productos Seleccionados") },
+        text = {
+            Column {
+                viewModel.productosSeleccionados.value.forEach { producto ->
+                    Text(text = "${producto.nombre} - ${producto.precio}€")
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Cerrar")
+            }
+        }
+    )
 }
 
 @Composable
@@ -206,8 +234,10 @@ fun Componente(
 fun EditarProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) {
     val producto = viewModel.productoAEditar.value
     if (producto != null) {
-        var nombre by remember { mutableStateOf(producto.nombre) }
-        var precio by remember { mutableStateOf(producto.precio.toString()) }
+        val nombre by viewModel.nombre
+        val precio by viewModel.precio
+        //var nombre by remember { mutableStateOf(producto.nombre) }
+        //var precio by remember { mutableStateOf(producto.precio.toString()) }
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -216,12 +246,12 @@ fun EditarProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) 
                 Column {
                     TextField(
                         value = nombre,
-                        onValueChange = { nombre = it },
+                        onValueChange = { viewModel.nombre.value = it },
                         label = { Text("Nombre") }
                     )
                     TextField(
                         value = precio,
-                        onValueChange = { precio = it },
+                        onValueChange = { viewModel.precio.value = it },
                         label = { Text("Precio") },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
@@ -247,7 +277,7 @@ fun EditarProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) 
 
 @Composable
 fun AnadirProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) {
-    var nombre by remember { mutableStateOf("") }
+    viewModel.nombre.value = ""
     var precio by remember { mutableStateOf("") }
 
     AlertDialog(
@@ -256,8 +286,8 @@ fun AnadirProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) 
         text = {
             Column {
                 TextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
+                    value = viewModel.nombre.value,
+                    onValueChange = { viewModel.nombre.value = it },
                     label = { Text("Nombre") }
                 )
                 TextField(
@@ -272,7 +302,8 @@ fun AnadirProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) 
             Button(onClick = {
                 val precioDouble = precio.toDoubleOrNull()
                 if (precioDouble != null) {
-                    viewModel.anadirProducto(nombre, precioDouble)
+                    viewModel.anadirProducto(viewModel.nombre.value, precioDouble)
+
                 }
                 onDismiss()
             }) {

@@ -1,7 +1,10 @@
 package com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.examenpmdmterceraevaluacion.ui.theme.entities.Producto
@@ -13,7 +16,8 @@ class Ejercicio1ViewModel: ViewModel() {
     var productosSeleccionados = mutableStateOf(listOf<Producto>())
     var contadorProductos = mutableIntStateOf(0)
     var seleccionarTodos = mutableStateOf(false)
-
+    var nombre = mutableStateOf("")
+    var precio = mutableStateOf("")
 
 
     //EDITAR
@@ -31,6 +35,12 @@ class Ejercicio1ViewModel: ViewModel() {
             }
         }
         productoAEditar.value = null // Reset the editing product
+    }
+
+    fun limpiarProductoAEditar() {
+        productoAEditar.value = null
+        nombre.value = ""
+        precio.value = ""
     }
 
     //ELIMINACION
@@ -54,6 +64,9 @@ class Ejercicio1ViewModel: ViewModel() {
         val nuevoProducto = Producto(nombre, precio)
         listaProductos.add(nuevoProducto)
     }
+
+    //Ver productos seleccionados
+    var showSeleccionadosDialog = mutableStateOf(false)
 
 
 
