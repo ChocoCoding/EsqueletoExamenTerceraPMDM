@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,7 +49,6 @@ import com.example.examenpmdmterceraevaluacion.ui.theme.viewmodel.LoginViewModel
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewModelEjercicio1:Ejercicio1ViewModel){
-
 
     Scaffold(
         topBar = {
@@ -63,7 +64,13 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                         onClick = {viewModelEjercicio1.showAddDialog.value = true}) {
                         Icon(Icons.Default.Add, contentDescription = "Añadir")
                     }
-                    IconButton(onClick = {viewModelEjercicio1.showSeleccionadosDialog.value = true}) {
+                    IconButton(onClick = {
+                        if (viewModelEjercicio1.productosSeleccionados.value.size == 0){
+                            viewModelEjercicio1.showNoHayProductosSeleccionados.value = true
+                        }else  viewModelEjercicio1.showSeleccionadosDialog.value = true
+
+
+                    }) {
                         Icon(Icons.Default.ShoppingCart,contentDescription = "Productos Seleccionados")
                     }
                 },
@@ -80,12 +87,18 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                 .fillMaxSize()
                 .padding(bottom = 56.dp)
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(Color.Yellow)
-            ) {
+
+            //Mostramos EDITAR2
+            if(viewModelEjercicio1.showEditar2.value){
+                editar2(viewModel = viewModelEjercicio1)
             }
+
+            if (viewModelEjercicio1.showNoHayProductosSeleccionados.value){
+                NohayProductosDialog(
+                    viewModel = viewModelEjercicio1,
+                    onDismiss = {viewModelEjercicio1.showNoHayProductosSeleccionados.value = false})
+            }
+
 
             Lista(
                 navController = navController,
@@ -97,11 +110,13 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                 }
             )
 
+            //EDITAR CON ALERT DIALOG
             if (viewModelEjercicio1.showDialog.value) {
-                EditarProductoDialog(
+                /*EditarProductoDialog(
                     viewModel = viewModelEjercicio1,
                     onDismiss = { viewModelEjercicio1.showDialog.value = false }
-                )
+                )*/
+
             }
 
             if (viewModelEjercicio1.showAddDialog.value) {
@@ -118,11 +133,14 @@ fun AppPpalEj1(navController: NavController,viewModelLogin: LoginViewModel,viewM
                 )
             }
 
+
         }
 
     }
 
 }
+
+
 
 @Composable
 fun MostrarProductosSeleccionados(
@@ -216,6 +234,9 @@ fun Componente(
                IconButton(onClick = {
                    viewModel.productoAEditar.value = producto
                    viewModel.showDialog.value = true
+
+                   //Editar2
+                   viewModel.showEditar2.value = true
                }) {
                    Icon(Icons.Default.Edit, contentDescription = "Editar")
                }
@@ -230,8 +251,49 @@ fun Componente(
     }
 
 }
+
 @Composable
-fun EditarProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) {
+fun editar2(
+    viewModel: Ejercicio1ViewModel) {
+    val producto = viewModel.productoAEditar.value
+    if (producto != null) {
+        val nombre by viewModel.nombre
+        val precio by viewModel.precio
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = nombre,
+                onValueChange = { viewModel.nombre.value = it },
+                label = { Text("Nombre") }
+            )
+            TextField(
+                value = precio,
+                onValueChange = { viewModel.precio.value = it },
+                label = { Text("Precio") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+            Button(onClick = {
+                val precioDouble = precio.toDoubleOrNull() ?: producto.precio
+                viewModel.actualizarProducto(nombre, precioDouble)
+                viewModel.nombre.value = "";
+                viewModel.precio.value = "";
+            }) {
+                Text("Editar")
+            }
+        }
+    }
+}
+
+
+@Composable
+fun EditarProductoDialog(
+    viewModel: Ejercicio1ViewModel,
+    onDismiss: () -> Unit) {
     val producto = viewModel.productoAEditar.value
     if (producto != null) {
         val nombre by viewModel.nombre
@@ -313,6 +375,23 @@ fun AnadirProductoDialog(viewModel: Ejercicio1ViewModel, onDismiss: () -> Unit) 
         dismissButton = {
             Button(onClick = onDismiss) {
                 Text("Cancelar")
+            }
+        }
+    )
+}
+
+@Composable
+fun NohayProductosDialog(
+    viewModel: Ejercicio1ViewModel,
+    onDismiss: () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "No hay productos seleccionados, selecciona algun producto") },
+        text = {},
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Cerrar")
             }
         }
     )

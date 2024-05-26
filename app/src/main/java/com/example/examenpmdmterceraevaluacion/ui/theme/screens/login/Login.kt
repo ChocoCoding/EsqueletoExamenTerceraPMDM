@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -30,7 +31,10 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
     if(viewModel.showDialogIntentos.value){
         NoHayMasIntentosDialog(
             viewModel = viewModel,
-            onDismiss = {viewModel.showDialogIntentos.value = false}
+            onDismiss = {
+                viewModel.showDialogIntentos.value = false
+                navController.navigate(route = Screens.Menu.route)
+            }
         )
     }
 
@@ -41,7 +45,7 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
+        OutlinedTextField(
             value = viewModel.username,
             onValueChange ={viewModel.username = it},
             label = { Text("Usuario") },
@@ -50,7 +54,7 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
+        OutlinedTextField(
             value = viewModel.password,
             onValueChange = {viewModel.password = it},
             label = {Text("Contraseña")},
@@ -64,16 +68,15 @@ fun AppLogin(navController: NavController,viewModel: LoginViewModel){
             onClick = {
                 val isValidCredential = viewModel.users.any{it.username == viewModel.username && it.password == viewModel.password}
                 if (isValidCredential){
+                    viewModel.guardarUsuario(context,viewModel.username,viewModel.password)
                     navController.navigate(Screens.Ejercicio1.route)
                 }else{
                     viewModel.intentos--
                     if(viewModel.intentos <= 0){
                         //Toast.makeText(context, "Te has quedado sin intentos", Toast.LENGTH_SHORT).show()
                         viewModel.showDialogIntentos.value = true
-                        if(!viewModel.showDialogIntentos.value){
-                            navController.navigate(route = Screens.Menu.route)
-                            viewModel.intentos = 3;
-                        }
+                        viewModel.intentos = 3;
+
 
                     }else{
                         Toast.makeText(context, "Intentos restantes: ${viewModel.intentos}", Toast.LENGTH_SHORT).show()
@@ -111,6 +114,5 @@ fun NoHayMasIntentosDialog(
             }
         }
     )
-
-
 }
+

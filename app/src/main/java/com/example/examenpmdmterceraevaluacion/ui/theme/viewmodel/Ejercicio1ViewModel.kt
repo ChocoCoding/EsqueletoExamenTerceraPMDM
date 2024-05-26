@@ -19,6 +19,8 @@ class Ejercicio1ViewModel: ViewModel() {
     var nombre = mutableStateOf("")
     var precio = mutableStateOf("")
 
+    var showNoHayProductosSeleccionados = mutableStateOf(false)
+
 
     //EDITAR
     var productoAEditar = mutableStateOf<Producto?>(null)
@@ -37,11 +39,8 @@ class Ejercicio1ViewModel: ViewModel() {
         productoAEditar.value = null // Reset the editing product
     }
 
-    fun limpiarProductoAEditar() {
-        productoAEditar.value = null
-        nombre.value = ""
-        precio.value = ""
-    }
+    //EDITAR 2
+    var showEditar2 = mutableStateOf(false)
 
     //ELIMINACION
     fun eliminarProducto(producto: Producto) {
@@ -67,7 +66,6 @@ class Ejercicio1ViewModel: ViewModel() {
 
     //Ver productos seleccionados
     var showSeleccionadosDialog = mutableStateOf(false)
-
 
 
     fun onProductoSeleccionadoChange(producto: Producto,seleccionado : Boolean){
