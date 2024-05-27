@@ -54,6 +54,14 @@ class Ejercicio1ViewModel: ViewModel() {
         contadorProductos.value = productosSeleccionadosActual.size
     }
 
+    //Eliminamos el producto seleccionado //BUG Cuando hay que editar un producto seleccionado
+    fun eliminarProductoSeleccionado(producto: Producto){
+        val productosSeleccionadosActual = productosSeleccionados.value.toMutableStateList()
+        productosSeleccionadosActual.remove(producto)
+        productosSeleccionados.value = productosSeleccionadosActual
+        contadorProductos.value = productosSeleccionadosActual.size
+    }
+
 
 
     //AÑADIR

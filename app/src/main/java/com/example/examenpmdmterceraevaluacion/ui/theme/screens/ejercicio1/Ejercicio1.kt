@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -234,6 +235,7 @@ fun Componente(
                IconButton(onClick = {
                    viewModel.productoAEditar.value = producto
                    viewModel.showDialog.value = true
+                   viewModel.eliminarProductoSeleccionado(producto)
 
                    //Editar2
                    viewModel.showEditar2.value = true
@@ -259,6 +261,7 @@ fun editar2(
     if (producto != null) {
         val nombre by viewModel.nombre
         val precio by viewModel.precio
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -278,6 +281,7 @@ fun editar2(
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
             Button(onClick = {
+
                 val precioDouble = precio.toDoubleOrNull() ?: producto.precio
                 viewModel.actualizarProducto(nombre, precioDouble)
                 viewModel.nombre.value = "";
